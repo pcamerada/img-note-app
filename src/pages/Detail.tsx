@@ -5,8 +5,8 @@ import {
   LuCheck,
   LuChevronLeft,
   LuCircle,
-  LuFileEdit,
   LuRectangleHorizontal,
+  LuUploadCloud,
   LuX,
 } from "react-icons/lu";
 import CanvaComponent from "../components/CanvaComponent";
@@ -14,9 +14,11 @@ import NotesComponent from "../components/NotesComponent";
 import { NoteModel } from "../models/Note";
 import { ShapeModel } from "../models/Shape";
 import { useServer } from "../contexts/ServerContext";
+import { useHelper } from "../contexts/HelperContext";
 
 const Detail = () => {
   const { callSaveImage, callGetImage, callSaveNote, callUpdateNote, callGetNoteListByImage } = useServer();
+  const { showAlert } = useHelper();
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,7 +29,7 @@ const Detail = () => {
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>("");
   const [noteList, setNoteList] = useState<NoteModel[]>([]);
 
-  const [shape, setShape] = useState<ShapeModel[]>([]);
+  const [shape, setShape] = useState<ShapeModel | null>(null);
   const [selectedShape, setSelectedShape] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,11 +40,11 @@ const Detail = () => {
             setImageId(id);
             setImage(image.image);
             setNoteList(notes);
+            getSession();
           }
         );
       }
     };
-
     fetchImage();
   }, [id]);
 
@@ -50,7 +52,6 @@ const Detail = () => {
     if (id === undefined && image) {
       const id = uuidv4();
       setImageId(id);
-      // saveImage(id, image);
       callSaveImage(id, image);
     }
   }, [image]);
@@ -77,9 +78,10 @@ const Detail = () => {
     promiseList.push(callGetNoteListByImage(imageId));
     Promise.all(promiseList).then(([_, notes]) => {
       setNoteList(notes);
-      setShape([]);
+      setShape(null);
       setSelectedShape(null);
       setNote("");
+      clearSession();
     });
   };
 
@@ -87,14 +89,17 @@ const Detail = () => {
     setSelectedShape(shape);
   };
 
-  const handleTriggerShape = (shape: any) => {
-    setShape(shape);
+  const handleTriggerShape = (triggeredShape: ShapeModel) => {
+    if (triggeredShape.x !== shape?.x || triggeredShape.y !== shape?.y) {
+      setShape(triggeredShape)
+    };
   };
 
   const handleDeleteAnnotation = () => {
-    setShape([]);
+    setShape(null);
     setSelectedShape(null);
     setNote("");
+    clearSession();
   };
 
   const handleSelectNote = (note: any) => {
@@ -102,6 +107,32 @@ const Detail = () => {
     setShape(note.shape);
     setSelectedShape(note.shape.type);
     setNote(note.note);
+  };
+
+  const saveSession = () => {
+    const session = {
+      imageId,
+      note,
+      shape
+    };
+    sessionStorage.setItem("session", JSON.stringify(session));
+    showAlert({ type: "success", message: "Session saved successfully!" });
+  };
+
+  const getSession = () => {
+    const session = sessionStorage.getItem("session");
+    if (session) {
+      const { imageId, note, shape } = JSON.parse(session);
+      if (imageId === id) {
+        setNote(note);
+        setShape(shape);
+        setSelectedShape(shape?.type === "circle" ? "circle" : "rectangle");
+      }
+    }
+  };
+
+  const clearSession = () => {
+    sessionStorage.removeItem("session");
   };
 
   return (
@@ -141,46 +172,59 @@ const Detail = () => {
               inputShape={shape}
             />
             <div className="flex flex-col justify-start items-center gap-4 ml-4">
-              <button className="p-2 bg-blue-100 hover:bg-blue-400 to-blue-500 rounded-full">
-                <LuFileEdit className="h-6 w-6" />
+            <button
+                className={`p-2 rounded-full to-blue-500 ${
+                  shape && note
+                    ? "bg-blue-100 hover:bg-blue-400"
+                    : "bg-gray-100 cursor-not-allowed"
+                }`}
+                onClick={saveSession} disabled={!shape && !note}
+              >
+                <LuUploadCloud className="h-6 w-6" />
               </button>
               <button
-                className="p-2 bg-blue-100 hover:bg-blue-400 to-blue-500 rounded-full"
+                // className="p-2 bg-blue-100 hover:bg-blue-400 to-blue-500 rounded-full"
+                className={`p-2 rounded-full to-blue-500 ${
+                  selectedShape === "rectangle" ? "bg-blue-400" : "bg-blue-100"
+                }`}
                 onClick={() => addShape("rectangle")}
               >
                 <LuRectangleHorizontal className="h-6 w-6" />
               </button>
               <button
-                className="p-2 bg-blue-100 hover:bg-blue-400 to-blue-500 rounded-full"
+                // className="p-2 bg-blue-100 hover:bg-blue-400 to-blue-500 rounded-full"
+                className={`p-2 rounded-full to-blue-500 ${
+                  selectedShape === "circle" ? "bg-blue-400" : "bg-blue-100"
+                }`}
                 onClick={() => addShape("circle")}
               >
                 <LuCircle className="h-6 w-6" />
               </button>
               <button
                 className={`p-2 rounded-full ${
-                  selectedShape && note
+                  note
                     ? "bg-green-100 hover:bg-green-400"
                     : "bg-gray-100 cursor-not-allowed"
                 }`}
                 onClick={handleSaveNote}
-                disabled={!selectedShape && !note}
+                disabled={!note}
               >
                 <LuCheck className="h-6 w-6" />
               </button>
               <button
                 className={`p-2 rounded-full ${
-                  selectedShape || note
+                  shape
                     ? "bg-red-100 hover:bg-red-300"
                     : "bg-gray-100 cursor-not-allowed"
                 }`}
                 onClick={handleDeleteAnnotation}
-                disabled={!selectedShape && !note}
+                disabled={!shape}
               >
                 <LuX className="h-6 w-6" />
               </button>
             </div>
           </div>
-          {selectedShape && (
+          {(selectedShape || note) && (
             <div className="mt-4">
               <textarea
                 value={note || ""}

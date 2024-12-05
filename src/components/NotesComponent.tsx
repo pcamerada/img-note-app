@@ -23,11 +23,6 @@ const NotesComponent = ({
   }, [noteList]);
 
   const handleDeleteNote = (note: NoteModel) => {
-    // callDeleteNote(note.id).then(() => {
-    //   callGetNoteListByImage(imageId).then((notes) => {
-    //     setNotes(notes);
-    //   });
-    // });
     Promise.all([
       callDeleteNote(note.id),
       callGetNoteListByImage(imageId),

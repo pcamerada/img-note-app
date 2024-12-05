@@ -11,11 +11,12 @@ import {
 } from "../utils/db";
 import { useHelper } from "./HelperContext";
 import { NoteModel } from "../models/Note";
+import { ImageModel } from "../models/Image";
 
 interface ServerContextProps {
   callSaveImage: (id: string, image: string) => Promise<void>;
-  callGetImage: (id: string) => Promise<any>;
-  callGetAllImages: () => Promise<any[]>;
+  callGetImage: (id: string) => Promise<ImageModel>;
+  callGetAllImages: () => Promise<ImageModel[]>;
   callDeleteImage: (id: string) => Promise<void>;
   callSaveNote: (id: string, imageId: string, note: string, shape: any) => Promise<void>;
   callUpdateNote: (id: string, imageId: string, note: string, shape: any) => Promise<void>;

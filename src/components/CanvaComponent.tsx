@@ -10,12 +10,13 @@ import {
   Image as KonvaImage,
 } from "react-konva";
 import useImage from "use-image";
+import { ShapeModel } from "../models/Shape";
 
 type CanvaComponentProps = {
   image: string;
   selectedShape: string | null;
   triggerShape: (shape: any) => void;
-  inputShape: any[] | null;
+  inputShape: ShapeModel | null;
 };
 
 const CanvaComponent = ({
@@ -23,7 +24,7 @@ const CanvaComponent = ({
   selectedShape,
   triggerShape,
   inputShape,
-} : CanvaComponentProps) => {
+}: CanvaComponentProps) => {
   const [konvaImage] = useImage(image || "");
   const [shapes, setShapes] = useState<any[]>([]);
   const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
@@ -46,21 +47,13 @@ const CanvaComponent = ({
   }, [selectedShapeId]);
 
   useEffect(() => {
-    if (selectedShape === "circle") {
-      addCircle();
-    } else if (selectedShape === "rectangle") {
-      addRectangle();
-    }
-  }, [selectedShape]);
-
-  useEffect(() => {
     if (shapes.length > 0) {
       triggerShape(shapes[0]);
     }
   }, [shapes]);
 
   useEffect(() => {
-    if (!inputShape || inputShape.length === 0) {
+    if (!inputShape) {
       setShapes([]);
       setSelectedShapeId(null);
     } else {
@@ -90,13 +83,13 @@ const CanvaComponent = ({
     ? getScaledDimensions(konvaImage.width, konvaImage.height)
     : { width: maxWidth, height: maxHeight };
 
-  const addRectangle = () => {
+  const addRectangle = (x: number, y: number) => {
     setShapes([
       {
         id: uuidv4(),
         type: "rect",
-        x: 50,
-        y: 50,
+        x: x ? x : 50,
+        y: y ? y : 50,
         width: 100,
         height: 180,
         fill: "rgba(255, 0, 0, 0.5)",
@@ -105,13 +98,13 @@ const CanvaComponent = ({
     setSelectedShapeId(null);
   };
 
-  const addCircle = () => {
+  const addCircle = (x: number, y: number) => {
     setShapes([
       {
         id: uuidv4(),
         type: "circle",
-        x: 100,
-        y: 100,
+        x: x ? x : 100,
+        y: y ? y : 100,
         radius: 50,
         fill: "rgba(255, 0, 0, 0.5)",
       },
@@ -137,17 +130,15 @@ const CanvaComponent = ({
     if (stage) {
       const pointerPosition = stage.getPointerPosition();
       if (pointerPosition) {
-        // You can use the coordinates as needed
-        setShapes([
-          {
-            id: uuidv4(),
-            type: "circle",
-            x: pointerPosition.x,
-            y: pointerPosition.y,
-            radius: 50,
-            fill: "rgba(255, 0, 0, 0.5)",
-          },
-        ]);
+        const { x, y } = pointerPosition;
+        if (selectedShape === "circle") {
+          addCircle(x, y);
+        } else if (selectedShape === "rectangle") {
+          addRectangle(x, y);
+        } else {
+          selectedShape = "circle";
+          addCircle(x, y);
+        }
         setSelectedShapeId(null);
       }
     }
@@ -156,7 +147,12 @@ const CanvaComponent = ({
   return (
     <Stage width={width} height={height} ref={stageRef}>
       <Layer>
-        <KonvaImage image={konvaImage} width={width} height={height} onClick={handleImageClick} />
+        <KonvaImage
+          image={konvaImage}
+          width={width}
+          height={height}
+          onClick={handleImageClick}
+        />
         {shapes.map((shape, i) => {
           if (shape.type === "rect") {
             return (

@@ -1,27 +1,39 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ImageComponent from "../components/ImageComponent";
 import { useServer } from "../contexts/ServerContext";
+import { ImageModel } from "../models/Image";
 
 const Gallery = () => {
   const { callGetAllImages, callDeleteImage } = useServer();
-  const [images, setImages] = React.useState<{ id: string; image: string }[]>(
-    []
-  );
+  const [images, setImages] = useState<ImageModel[]>([]);
+  const [sessionId, setSessionId] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchImages = async () => {
-      const storedImages = await callGetAllImages();
-      setImages(storedImages);
+      callGetAllImages().then((images) => {
+        setImages(images);
+        getSession();
+      });
     };
 
     fetchImages();
   }, []);
 
+  const getSession = () => {
+    const session = sessionStorage.getItem("session");
+    if (session) {
+      const { imageId } = JSON.parse(session);
+      setSessionId(imageId);
+    }
+  };
+
   const handleDeleteImage = (id: string) => {
-    Promise.all([callDeleteImage(id), callGetAllImages()]).then(([_, images]) => {
-      setImages(images);
-    });
+    Promise.all([callDeleteImage(id), callGetAllImages()]).then(
+      ([_, images]) => {
+        setImages(images);
+      }
+    );
   };
 
   return (
@@ -37,12 +49,13 @@ const Gallery = () => {
           No images available. Add a new image to get started!
         </p>
       ) : (
-        <div className="grid grid-cols-4 gap-0">
+        <div className="grid grid-cols-4 gap-0 h-[700px] overflow-auto">
           {images.map((img) => (
             <ImageComponent
               key={img.id}
               id={img.id}
               image={img.image}
+              sessionImageId={sessionId}
               triggerDeleteImage={handleDeleteImage}
             />
           ))}
