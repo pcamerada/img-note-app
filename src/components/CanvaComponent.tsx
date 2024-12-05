@@ -132,10 +132,31 @@ const CanvaComponent = ({
     setShapes(updatedShapes);
   };
 
+  const handleImageClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const stage = stageRef.current;
+    if (stage) {
+      const pointerPosition = stage.getPointerPosition();
+      if (pointerPosition) {
+        // You can use the coordinates as needed
+        setShapes([
+          {
+            id: uuidv4(),
+            type: "circle",
+            x: pointerPosition.x,
+            y: pointerPosition.y,
+            radius: 50,
+            fill: "rgba(255, 0, 0, 0.5)",
+          },
+        ]);
+        setSelectedShapeId(null);
+      }
+    }
+  };
+
   return (
     <Stage width={width} height={height} ref={stageRef}>
       <Layer>
-        <KonvaImage image={konvaImage} width={width} height={height} />
+        <KonvaImage image={konvaImage} width={width} height={height} onClick={handleImageClick} />
         {shapes.map((shape, i) => {
           if (shape.type === "rect") {
             return (

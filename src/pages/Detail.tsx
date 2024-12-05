@@ -121,15 +121,13 @@ const Detail = () => {
       </button>
 
       {!image && (
-        <div className="mb-4 w-full justify-center">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Upload an Image
-          </label>
+        <div className="mb-4 w-full flex flex-col justify-center items-center">
+          <h2 className="text-lg font-semibold mb-2">Upload an Image</h2>
           <input
             type="file"
             accept="image/*"
             onChange={handleImageUpload}
-            className="block w-full text-sm text-gray-500
+            className="block text-sm text-gray-500
                         file:mr-4 file:py-2 file:px-4
                         file:rounded file:border-0
                         file:text-sm file:font-semibold
