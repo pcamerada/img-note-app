@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { getAllImages } from "../utils/db";
-import { LuX, LuFileEdit } from "react-icons/lu";
+import { Link } from "react-router-dom";
+import { getAllImages, deleteImage } from "../utils/db";
+import ImageComponent from "../components/ImageComponent";
 
 const Gallery = () => {
-  const navigate = useNavigate();
   const [images, setImages] = React.useState<{ id: string; image: string }[]>(
     []
   );
@@ -18,43 +17,33 @@ const Gallery = () => {
     fetchImages();
   }, []);
 
-  const handleEditImage = (id: string) => {
-    navigate(`/detail/${id}`);
+  const handleDeleteImage = (id: string) => {
+    Promise.all([deleteImage(id), getAllImages()]).then(([_, images]) => {
+      setImages(images);
+    });
   };
 
   return (
     <div className="p-2">
-      <h1 className="text-2xl font-bold mb-4">Image Gallery</h1>
-      <button className="bg-blue-500 text-white px-4 py-2 rounded">
-        <Link to="/detail">Add New Image</Link>
-      </button>
+      <div className="pb-8">
+        <h1 className="text-2xl font-bold mb-4">Image Gallery</h1>
+        <button className="bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded z-10 static">
+          <Link to="/detail">Add New Image</Link>
+        </button>
+      </div>
       {images.length === 0 ? (
         <p className="text-gray-500">
           No images available. Add a new image to get started!
         </p>
       ) : (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-4 gap-0">
           {images.map((img) => (
-            <div key={img.id}>
-              <div
-                key={img.id}
-                className="relative border rounded overflow-hidden"
-              >
-                <img
-                  src={img.image}
-                  alt="Uploaded"
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <div className="flex">
-                <button className="">
-                  <LuX className="h-6 w-6" />
-                </button>
-                <button className="" onClick={() => handleEditImage(img.id)}>
-                  <LuFileEdit className="h-6 w-6" />
-                </button>
-              </div>
-            </div>
+            <ImageComponent
+              key={img.id}
+              id={img.id}
+              image={img.image}
+              triggerDeleteImage={handleDeleteImage}
+            />
           ))}
         </div>
       )}

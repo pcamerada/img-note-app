@@ -54,7 +54,7 @@ const Detail = () => {
   }, [id]);
 
   useEffect(() => {
-    if (id === null && image) {
+    if (id === undefined && image) {
       const id = uuidv4();
       setImageId(id);
       saveImage(id, image);
@@ -110,14 +110,6 @@ const Detail = () => {
     setNote(note.note);
   };
 
-//   const handleDeleteNote = (note: any) => {
-//     deleteNote(note.id).then(() => {
-//       getNoteListByImage(imageId).then((notes) => {
-//         setNoteList(notes);
-//       });
-//     });
-//   };
-
   return (
     <div className="p-2 w-full">
       <button
@@ -128,9 +120,6 @@ const Detail = () => {
         Go to Gallery
       </button>
 
-      <h1 className="text-2xl font-bold mb-4">
-        {id ? `Edit Image: ${id}` : "Add New Image"}
-      </h1>
       {!image && (
         <div className="mb-4 w-full justify-center">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -152,7 +141,7 @@ const Detail = () => {
       {image && (
         <div className="mt-4 w-full">
           <h2 className="text-lg font-semibold mb-2">Image Preview:</h2>
-          <div className="flex gap-8 justify-center">
+          <div className="flex gap-8 justify-center pt-4">
             <CanvaComponent
               image={image}
               selectedShape={selectedShape}
@@ -176,7 +165,6 @@ const Detail = () => {
                 <LuCircle className="h-6 w-6" />
               </button>
               <button
-                // className="p-2 bg-green-100 hover:bg-green-400 to-green-500 rounded-full"
                 className={`p-2 rounded-full ${
                   selectedShape && note
                     ? "bg-green-100 hover:bg-green-400"
@@ -188,7 +176,6 @@ const Detail = () => {
                 <LuCheck className="h-6 w-6" />
               </button>
               <button
-                // className="p-2 bg-red-100 hover:bg-red-300 to-red-500 rounded-full"
                 className={`p-2 rounded-full ${
                   selectedShape || note
                     ? "bg-red-100 hover:bg-red-300"
@@ -212,29 +199,6 @@ const Detail = () => {
               />
             </div>
           )}
-          {/* {noteList.length > 0 && (
-            <div className="mt-4 w-full">
-              <h2 className="text-lg font-semibold mb-2">Notes:</h2>
-              <div className="max-h-60 overflow-y-auto">
-                {noteList.map((note: any) => (
-                  <div
-                    key={note.id}
-                    className="flex justify-between p-2 hover:border hover:border-blue-300 rounded-lg"
-                  >
-                    <span className="mb-2">{note.note}</span>
-                    <div className="flex">
-                      <button onClick={() => handleSelectNote(note)}>
-                        <LuFileEdit className="h-6 w-6" />
-                      </button>
-                      <button onClick={() => handleDeleteNote(note)}>
-                        <LuX className="h-6 w-6" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )} */}
           <NotesComponent
             imageId={imageId}
             noteList={noteList}
