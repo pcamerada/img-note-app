@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { LuX, LuFileEdit, LuDownloadCloud } from "react-icons/lu";
+import { LuX, LuDownloadCloud } from "react-icons/lu";
 
 type ImageComponentProps = {
   id: string;

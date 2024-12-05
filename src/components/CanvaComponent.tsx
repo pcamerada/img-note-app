@@ -113,6 +113,7 @@ const CanvaComponent = ({
   };
 
   const handleTransform = (id: string, newAttrs: any) => {
+    console.log(id, newAttrs);
     const updatedShapes = shapes.map((shape) => {
       if (shape.id === id) {
         return {
@@ -122,10 +123,11 @@ const CanvaComponent = ({
       }
       return shape;
     });
+    console.log(updatedShapes);
     setShapes(updatedShapes);
   };
 
-  const handleImageClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const handleImageClick = () => {
     const stage = stageRef.current;
     if (stage) {
       const pointerPosition = stage.getPointerPosition();
@@ -167,6 +169,7 @@ const CanvaComponent = ({
                   handleTransform(shape.id, {
                     x: node.x(),
                     y: node.y(),
+                    rotation: node.rotation()
                   });
                 }}
                 onTransformEnd={(e) => {
@@ -180,6 +183,7 @@ const CanvaComponent = ({
                     y: node.y(),
                     width: node.width() * scaleX,
                     height: node.height() * scaleY,
+                    rotation: node.rotation()
                   });
                 }}
               />
@@ -197,6 +201,7 @@ const CanvaComponent = ({
                   handleTransform(shape.id, {
                     x: node.x(),
                     y: node.y(),
+                    rotation: node.rotation()
                   });
                 }}
                 onTransformEnd={(e) => {
@@ -208,11 +213,9 @@ const CanvaComponent = ({
                   handleTransform(shape.id, {
                     x: node.x(),
                     y: node.y(),
-                    // radius:
-                    //   (node as Konva.Circle).radius() *
-                    //   Math.max(scaleX, scaleY),
                     scaleX: scaleX,
                     scaleY: scaleY,
+                    rotation: node.rotation()
                   });
                 }}
               />

@@ -24,6 +24,9 @@ export const HelperProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   
     const showAlert = (alert: Alert) => {
       setAlert(alert);
+      setTimeout(() => {
+        hideAlert();
+      }, 10000);
     };
   
     const hideAlert = () => {

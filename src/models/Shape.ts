@@ -8,4 +8,6 @@ export interface ShapeModel {
     scaleX?: number;
     scaleY?: number;
     radius?: number;
+    fill: string;
+    rotation: number;
 }

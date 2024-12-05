@@ -1,4 +1,4 @@
-import { LuFileEdit, LuX } from "react-icons/lu";
+import { LuX } from "react-icons/lu";
 import { NoteModel } from "../models/Note";
 import { useEffect, useState } from "react";
 import { useServer } from "../contexts/ServerContext";
@@ -40,12 +40,17 @@ const NotesComponent = ({
             key={note.id}
             className="flex justify-between p-2 hover:border hover:border-blue-300 rounded-lg"
           >
-            <span className="mb-2">{note.note}</span>
-            <div className="flex">
-              <button onClick={() => selectedNote(note)}>
-                <LuFileEdit className="h-6 w-6" />
-              </button>
-              <button onClick={() => handleDeleteNote(note)}>
+            <div
+              className="w-full text-left cursor-pointer"
+              onClick={() => selectedNote(note)}
+            >
+              <span className="mb-2">{note.note}</span>
+            </div>
+            <div>
+              <button
+                className="hover:bg-red-50"
+                onClick={() => handleDeleteNote(note)}
+              >
                 <LuX className="h-6 w-6" />
               </button>
             </div>
