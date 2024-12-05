@@ -1,16 +1,17 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getAllImages, deleteImage } from "../utils/db";
 import ImageComponent from "../components/ImageComponent";
+import { useServer } from "../contexts/ServerContext";
 
 const Gallery = () => {
+  const { callGetAllImages, callDeleteImage } = useServer();
   const [images, setImages] = React.useState<{ id: string; image: string }[]>(
     []
   );
 
   useEffect(() => {
     const fetchImages = async () => {
-      const storedImages = await getAllImages();
+      const storedImages = await callGetAllImages();
       setImages(storedImages);
     };
 
@@ -18,7 +19,7 @@ const Gallery = () => {
   }, []);
 
   const handleDeleteImage = (id: string) => {
-    Promise.all([deleteImage(id), getAllImages()]).then(([_, images]) => {
+    Promise.all([callDeleteImage(id), callGetAllImages()]).then(([_, images]) => {
       setImages(images);
     });
   };

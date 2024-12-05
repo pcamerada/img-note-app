@@ -2,13 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import {
-  getImage,
-  saveImage,
-  saveNote,
-  getNoteListByImage,
-  updateNote
-} from "../utils/db";
-import {
   LuCheck,
   LuChevronLeft,
   LuCircle,
@@ -20,8 +13,11 @@ import CanvaComponent from "../components/CanvaComponent";
 import NotesComponent from "../components/NotesComponent";
 import { NoteModel } from "../models/Note";
 import { ShapeModel } from "../models/Shape";
+import { useServer } from "../contexts/ServerContext";
 
 const Detail = () => {
+  const { callSaveImage, callGetImage, callSaveNote, callUpdateNote, callGetNoteListByImage } = useServer();
+
   const { id } = useParams();
   const navigate = useNavigate();
   const [image, setImage] = useState<string | null>(null);
@@ -37,14 +33,11 @@ const Detail = () => {
   useEffect(() => {
     const fetchImage = async () => {
       if (id) {
-        Promise.all([getImage(id), getNoteListByImage(id)]).then(
+        Promise.all([callGetImage(id), callGetNoteListByImage(id)]).then(
           ([image, notes]) => {
             setImageId(id);
             setImage(image.image);
             setNoteList(notes);
-          }, (error) => {
-            // add error handling
-            console.error(error);
           }
         );
       }
@@ -57,7 +50,8 @@ const Detail = () => {
     if (id === undefined && image) {
       const id = uuidv4();
       setImageId(id);
-      saveImage(id, image);
+      // saveImage(id, image);
+      callSaveImage(id, image);
     }
   }, [image]);
 
@@ -75,12 +69,12 @@ const Detail = () => {
   const handleSaveNote = async () => {
     const promiseList: Promise<any>[] = [];
     if (selectedNoteId && note) {
-      promiseList.push(updateNote(selectedNoteId, imageId, note, shape));
+      promiseList.push(callUpdateNote(selectedNoteId, imageId, note, shape));
     } else if (!selectedNoteId && note) {
       const id = uuidv4();
-      promiseList.push(saveNote(id, imageId, note, shape));
+      promiseList.push(callSaveNote(id, imageId, note, shape));
     }
-    promiseList.push(getNoteListByImage(imageId));
+    promiseList.push(callGetNoteListByImage(imageId));
     Promise.all(promiseList).then(([_, notes]) => {
       setNoteList(notes);
       setShape([]);

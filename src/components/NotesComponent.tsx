@@ -1,7 +1,7 @@
 import { LuFileEdit, LuX } from "react-icons/lu";
-import { deleteNote, getNoteListByImage } from "../utils/db";
 import { NoteModel } from "../models/Note";
 import { useEffect, useState } from "react";
+import { useServer } from "../contexts/ServerContext";
 
 type NotesComponentProps = {
   imageId: string;
@@ -10,22 +10,29 @@ type NotesComponentProps = {
 };
 
 const NotesComponent = ({
-    imageId,
-    noteList,
-    selectedNote
-} : NotesComponentProps) => {
-    const [notes, setNotes] = useState<NoteModel[]>([])
+  imageId,
+  noteList,
+  selectedNote,
+}: NotesComponentProps) => {
+  const { callDeleteNote, callGetNoteListByImage } = useServer();
 
-    useEffect(() => {
-      setNotes(noteList)
-    }, [noteList])
-    
+  const [notes, setNotes] = useState<NoteModel[]>([]);
+
+  useEffect(() => {
+    setNotes(noteList);
+  }, [noteList]);
 
   const handleDeleteNote = (note: NoteModel) => {
-    deleteNote(note.id).then(() => {
-      getNoteListByImage(imageId).then((notes) => {
-        setNotes(notes);
-      });
+    // callDeleteNote(note.id).then(() => {
+    //   callGetNoteListByImage(imageId).then((notes) => {
+    //     setNotes(notes);
+    //   });
+    // });
+    Promise.all([
+      callDeleteNote(note.id),
+      callGetNoteListByImage(imageId),
+    ]).then(([_, noteList]) => {
+      setNotes(noteList);
     });
   };
 

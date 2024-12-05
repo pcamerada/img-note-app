@@ -5,19 +5,22 @@ import "./App.css";
 import { HelperProvider } from "./contexts/HelperContext";
 import LoaderComponent from "./components/LoaderComponent";
 import AlertComponent from "./components/AlertComponent";
+import { ServerProvider } from "./contexts/ServerContext";
 
 function App() {
   return (
     <HelperProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Gallery />} />
-          <Route path="/detail/:id" element={<Detail />} />
-          <Route path="/detail" element={<Detail />} />
-        </Routes>
-      </Router>
-      <LoaderComponent />
-      <AlertComponent />
+      <ServerProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Gallery />} />
+            <Route path="/detail/:id" element={<Detail />} />
+            <Route path="/detail" element={<Detail />} />
+          </Routes>
+        </Router>
+        <LoaderComponent />
+        <AlertComponent />
+      </ServerProvider>
     </HelperProvider>
   );
 }

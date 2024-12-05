@@ -22,135 +22,205 @@ export const initDB = async () => {
   return db;
 };
 
-export const saveImage = (id: string, image: string): Promise<void> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const db = await initDB();
-      const tx = db.transaction(IMAGE_STORE_NAME, "readwrite");
-      const store = tx.objectStore(IMAGE_STORE_NAME);
-      await store.put({ id, image });
-      await tx.done;
-      resolve();
-    } catch (error) {
-      reject(error);
-    }
-  });
+// export const saveImage = (id: string, image: string): Promise<void> => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       const db = await initDB();
+//       const tx = db.transaction(IMAGE_STORE_NAME, "readwrite");
+//       const store = tx.objectStore(IMAGE_STORE_NAME);
+//       await store.put({ id, image });
+//       await tx.done;
+//       resolve();
+//     } catch (error) {
+//       reject(error);
+//     }
+//   });
+// };
+
+export const saveImage = async (id: string, image: string) => {
+  const db = await initDB();
+  const tx = db.transaction(IMAGE_STORE_NAME, "readwrite");
+  const store = tx.objectStore(IMAGE_STORE_NAME);
+  await store.put({ id, image });
+  await tx.done;
 };
 
-export const getImage = (id: string): Promise<any> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const db = await initDB();
-      const tx = db.transaction(IMAGE_STORE_NAME, "readonly");
-      const store = tx.objectStore(IMAGE_STORE_NAME);
-      const image = await store.get(id);
-      resolve(image);
-    } catch (error) {
-      reject(error);
-    }
-  });
+// export const getImage = (id: string): Promise<any> => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       const db = await initDB();
+//       const tx = db.transaction(IMAGE_STORE_NAME, "readonly");
+//       const store = tx.objectStore(IMAGE_STORE_NAME);
+//       const image = await store.get(id);
+//       resolve(image);
+//     } catch (error) {
+//       reject(error);
+//     }
+//   });
+// };
+
+export const getImage = async (id: string) => {
+  const db = await initDB();
+  const tx = db.transaction(IMAGE_STORE_NAME, "readonly");
+  const store = tx.objectStore(IMAGE_STORE_NAME);
+  const image = await store.get(id);
+  return image;
 };
 
-export const getAllImages = (): Promise<any> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const db = await initDB();
-      const tx = db.transaction(IMAGE_STORE_NAME, "readonly");
-      const store = tx.objectStore(IMAGE_STORE_NAME);
-      const images = await store.getAll();
-      resolve(images);
-    } catch (error) {
-      reject(error);
-    }
-  });
+// export const getAllImages = (): Promise<any> => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       const db = await initDB();
+//       const tx = db.transaction(IMAGE_STORE_NAME, "readonly");
+//       const store = tx.objectStore(IMAGE_STORE_NAME);
+//       const images = await store.getAll();
+//       resolve(images);
+//     } catch (error) {
+//       reject(error);
+//     }
+//   });
+// };
+
+export const getAllImages = async () => {
+  const db = await initDB();
+  const tx = db.transaction(IMAGE_STORE_NAME, "readonly");
+  const store = tx.objectStore(IMAGE_STORE_NAME);
+  const images = await store.getAll();
+  return images;
 };
 
-export const deleteImage = (id: string): Promise<void> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const db = await initDB();
-      const tx = db.transaction(IMAGE_STORE_NAME, "readwrite");
-      const store = tx.objectStore(IMAGE_STORE_NAME);
-      await store.delete(id);
-      await tx.done;
-      resolve();
-    } catch (error) {
-      reject(error);
-    }
-  });
+// export const deleteImage = (id: string): Promise<void> => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       const db = await initDB();
+//       const tx = db.transaction(IMAGE_STORE_NAME, "readwrite");
+//       const store = tx.objectStore(IMAGE_STORE_NAME);
+//       await store.delete(id);
+//       await tx.done;
+//       resolve();
+//     } catch (error) {
+//       reject(error);
+//     }
+//   });
+// };
+
+export const deleteImage = async (id: string) => {
+  const db = await initDB();
+  const tx = db.transaction(IMAGE_STORE_NAME, "readwrite");
+  const store = tx.objectStore(IMAGE_STORE_NAME);
+  await store.delete(id);
+  await tx.done;
 };
 
-export const saveNote = (
-  id: string,
-  imageId: string,
-  note: string,
-  shape: any
-): Promise<void> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const db = await initDB();
-      const tx = db.transaction(NOTE_STORE_NAME, "readwrite");
-      const store = tx.objectStore(NOTE_STORE_NAME);
-      await store.put({ id, imageId, note, shape });
-      await tx.done;
-      resolve();
-    } catch (error) {
-      reject(error);
-    }
-  });
+// export const saveNote = (
+//   id: string,
+//   imageId: string,
+//   note: string,
+//   shape: any
+// ): Promise<void> => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       const db = await initDB();
+//       const tx = db.transaction(NOTE_STORE_NAME, "readwrite");
+//       const store = tx.objectStore(NOTE_STORE_NAME);
+//       await store.put({ id, imageId, note, shape });
+//       await tx.done;
+//       resolve();
+//     } catch (error) {
+//       reject(error);
+//     }
+//   });
+// };
+
+export const saveNote = async (id: string, imageId: string, note: string, shape: any) => {
+  const db = await initDB();
+  const tx = db.transaction(NOTE_STORE_NAME, "readwrite");
+  const store = tx.objectStore(NOTE_STORE_NAME);
+  await store.put({ id, imageId, note, shape });
+  await tx.done;
 };
 
-export const updateNote = (
-  id: string,
-  imageId: string,
-  note: string,
-  shape: any
-): Promise<void> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const db = await initDB();
-      const tx = db.transaction(NOTE_STORE_NAME, "readwrite");
-      const store = tx.objectStore(NOTE_STORE_NAME);
-      const existingNote = await store.get(id);
-      if (existingNote) {
-        await store.put({ id, imageId, note, shape });
-        await tx.done;
-        resolve();
-      } else {
-        reject(new Error("Note not found"));
-      }
-    } catch (error) {
-      reject(error);
-    }
-  });
+// export const updateNote = (
+//   id: string,
+//   imageId: string,
+//   note: string,
+//   shape: any
+// ): Promise<void> => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       const db = await initDB();
+//       const tx = db.transaction(NOTE_STORE_NAME, "readwrite");
+//       const store = tx.objectStore(NOTE_STORE_NAME);
+//       const existingNote = await store.get(id);
+//       if (existingNote) {
+//         await store.put({ id, imageId, note, shape });
+//         await tx.done;
+//         resolve();
+//       } else {
+//         reject(new Error("Note not found"));
+//       }
+//     } catch (error) {
+//       reject(error);
+//     }
+//   });
+// };
+
+export const updateNote = async (id: string, imageId: string, note: string, shape: any) => {
+  const db = await initDB();
+  const tx = db.transaction(NOTE_STORE_NAME, "readwrite");
+  const store = tx.objectStore(NOTE_STORE_NAME);
+  const existingNote = await store.get(id);
+  if (existingNote) {
+    await store.put({ id, imageId, note, shape });
+    await tx.done;
+  } else {
+    throw new Error("Note not found");
+  }
 };
 
-export const deleteNote = (id: string): Promise<void> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const db = await initDB();
-      const tx = db.transaction(NOTE_STORE_NAME, "readwrite");
-      const store = tx.objectStore(NOTE_STORE_NAME);
-      await store.delete(id);
-      await tx.done;
-      resolve();
-    } catch (error) {
-      reject(error);
-    }
-  });
+// export const deleteNote = (id: string): Promise<void> => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       const db = await initDB();
+//       const tx = db.transaction(NOTE_STORE_NAME, "readwrite");
+//       const store = tx.objectStore(NOTE_STORE_NAME);
+//       await store.delete(id);
+//       await tx.done;
+//       resolve();
+//     } catch (error) {
+//       reject(error);
+//     }
+//   });
+// };
+
+export const deleteNote = async (id: string) => {
+  const db = await initDB();
+  const tx = db.transaction(NOTE_STORE_NAME, "readwrite");
+  const store = tx.objectStore(NOTE_STORE_NAME);
+  await store.delete(id);
+  await tx.done;
 };
 
-export const getNoteListByImage = (imageId: string): Promise<NoteModel[]> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const db = await initDB();
-      const tx = db.transaction(NOTE_STORE_NAME, "readonly");
-      const store = tx.objectStore(NOTE_STORE_NAME);
-      const index = store.index("imageId");
-      const notes = await index.getAll(imageId);
-      resolve(notes);
-    } catch (error) {
-      reject(error);
-    }
-  });
+// export const getNoteListByImage = (imageId: string): Promise<NoteModel[]> => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       const db = await initDB();
+//       const tx = db.transaction(NOTE_STORE_NAME, "readonly");
+//       const store = tx.objectStore(NOTE_STORE_NAME);
+//       const index = store.index("imageId");
+//       const notes = await index.getAll(imageId);
+//       resolve(notes);
+//     } catch (error) {
+//       reject(error);
+//     }
+//   });
+// };
+
+export const getNoteListByImage = async (imageId: string) => {
+  const db = await initDB();
+  const tx = db.transaction(NOTE_STORE_NAME, "readonly");
+  const store = tx.objectStore(NOTE_STORE_NAME);
+  const index = store.index("imageId");
+  const notes = await index.getAll(imageId);
+  return notes;
 };
