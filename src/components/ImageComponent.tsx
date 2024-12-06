@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { LuX, LuDownloadCloud } from "react-icons/lu";
+import { LuDownloadCloud, LuTrash2 } from "react-icons/lu";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 type ImageComponentProps = {
   id: string;
@@ -35,14 +36,20 @@ const ImageComponent = ({
       </div>
       <div className="flex justify-center">
         {sessionImageId === id && (
-          <div className="py-2 px-4">
+          <div className="py-2 px-4" data-tooltip-id="tooltip-active-session">
             <LuDownloadCloud className="h-6 w-6"/>
           </div>
         )}
         <button className="hover:bg-red-50" onClick={() => triggerDeleteImage(id)}>
-          <LuX className="h-6 w-6" />
+          <LuTrash2 className="h-6 w-6" />
         </button>
       </div>
+      <ReactTooltip
+        id="tooltip-active-session"
+        place="bottom"
+        variant="info"
+        content="Active Session"
+      />
     </div>
   );
 };

@@ -113,7 +113,6 @@ const CanvaComponent = ({
   };
 
   const handleTransform = (id: string, newAttrs: any) => {
-    console.log(id, newAttrs);
     const updatedShapes = shapes.map((shape) => {
       if (shape.id === id) {
         return {
@@ -123,7 +122,6 @@ const CanvaComponent = ({
       }
       return shape;
     });
-    console.log(updatedShapes);
     setShapes(updatedShapes);
   };
 
@@ -137,9 +135,6 @@ const CanvaComponent = ({
           addCircle(x, y);
         } else if (selectedShape === "rectangle") {
           addRectangle(x, y);
-        } else {
-          selectedShape = "circle";
-          addCircle(x, y);
         }
         setSelectedShapeId(null);
       }

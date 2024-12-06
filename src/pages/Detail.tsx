@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {
   LuCheck,
   LuChevronLeft,
@@ -17,7 +18,13 @@ import { useServer } from "../contexts/ServerContext";
 import { useHelper } from "../contexts/HelperContext";
 
 const Detail = () => {
-  const { callSaveImage, callGetImage, callSaveNote, callUpdateNote, callGetNoteListByImage } = useServer();
+  const {
+    callSaveImage,
+    callGetImage,
+    callSaveNote,
+    callUpdateNote,
+    callGetNoteListByImage,
+  } = useServer();
   const { showAlert } = useHelper();
 
   const { id } = useParams();
@@ -69,9 +76,9 @@ const Detail = () => {
 
   const handleSaveNote = async () => {
     const promiseList: Promise<any>[] = [];
-    if (selectedNoteId && note) {
+    if (selectedNoteId && note && shape) {
       promiseList.push(callUpdateNote(selectedNoteId, imageId, note, shape));
-    } else if (!selectedNoteId && note) {
+    } else if (!selectedNoteId && note && shape) {
       const id = uuidv4();
       promiseList.push(callSaveNote(id, imageId, note, shape));
     }
@@ -91,8 +98,8 @@ const Detail = () => {
 
   const handleTriggerShape = (triggeredShape: ShapeModel) => {
     if (triggeredShape.x !== shape?.x || triggeredShape.y !== shape?.y) {
-      setShape(triggeredShape)
-    };
+      setShape(triggeredShape);
+    }
   };
 
   const handleDeleteAnnotation = () => {
@@ -113,7 +120,7 @@ const Detail = () => {
     const session = {
       imageId,
       note,
-      shape
+      shape,
     };
     sessionStorage.setItem("session", JSON.stringify(session));
     showAlert({ type: "success", message: "Session saved successfully!" });
@@ -172,53 +179,57 @@ const Detail = () => {
               inputShape={shape}
             />
             <div className="flex flex-col justify-start items-center gap-4 ml-4">
-            <button
+              <button
                 className={`p-2 rounded-full to-blue-500 ${
                   shape && note
                     ? "bg-blue-100 hover:bg-blue-400"
-                    : "bg-gray-100 cursor-not-allowed"
+                    : "bg-gray-100 cursor-default"
                 }`}
-                onClick={saveSession} disabled={!shape && !note}
+                onClick={saveSession}
+                disabled={!shape && !note}
+                data-tooltip-id="tooltip-save-session"
               >
                 <LuUploadCloud className="h-6 w-6" />
               </button>
               <button
-                // className="p-2 bg-blue-100 hover:bg-blue-400 to-blue-500 rounded-full"
                 className={`p-2 rounded-full to-blue-500 ${
                   selectedShape === "rectangle" ? "bg-blue-400" : "bg-blue-100"
                 }`}
                 onClick={() => addShape("rectangle")}
+                data-tooltip-id="tooltip-set-rectangle"
               >
                 <LuRectangleHorizontal className="h-6 w-6" />
               </button>
               <button
-                // className="p-2 bg-blue-100 hover:bg-blue-400 to-blue-500 rounded-full"
                 className={`p-2 rounded-full to-blue-500 ${
                   selectedShape === "circle" ? "bg-blue-400" : "bg-blue-100"
                 }`}
                 onClick={() => addShape("circle")}
+                data-tooltip-id="tooltip-set-circle"
               >
                 <LuCircle className="h-6 w-6" />
               </button>
               <button
                 className={`p-2 rounded-full ${
-                  note
+                  note && shape
                     ? "bg-green-100 hover:bg-green-400"
-                    : "bg-gray-100 cursor-not-allowed"
+                    : "bg-gray-100 cursor-default"
                 }`}
                 onClick={handleSaveNote}
-                disabled={!note}
+                disabled={!shape && !note}
+                data-tooltip-id="tooltip-save"
               >
                 <LuCheck className="h-6 w-6" />
               </button>
               <button
                 className={`p-2 rounded-full ${
-                  shape
+                  shape && note
                     ? "bg-red-100 hover:bg-red-300"
-                    : "bg-gray-100 cursor-not-allowed"
+                    : "bg-gray-100 cursor-default"
                 }`}
                 onClick={handleDeleteAnnotation}
-                disabled={!shape}
+                disabled={!shape && !note}
+                data-tooltip-id="tooltip-clear"
               >
                 <LuX className="h-6 w-6" />
               </button>
@@ -238,8 +249,45 @@ const Detail = () => {
           <NotesComponent
             imageId={imageId}
             noteList={noteList}
-            selectedNote={handleSelectNote} />
+            selectedNote={handleSelectNote}
+          />
         </div>
+      )}
+      {shape && note && (
+        <ReactTooltip
+          id="tooltip-save-session"
+          place="left"
+          variant="info"
+          content="Save Session"
+        />
+      )}
+      <ReactTooltip
+        id="tooltip-set-rectangle"
+        place="left"
+        variant="info"
+        content="Set Rectangle"
+      />
+      <ReactTooltip
+        id="tooltip-set-circle"
+        place="left"
+        variant="info"
+        content="Set Circle"
+      />
+      {shape && note && (
+        <ReactTooltip
+          id="tooltip-save"
+          place="left"
+          variant="info"
+          content="Save Annotation"
+        />
+      )}
+      {shape && note && (
+        <ReactTooltip
+          id="tooltip-clear"
+          place="left"
+          variant="info"
+          content="Clear"
+        />
       )}
     </div>
   );

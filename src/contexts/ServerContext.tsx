@@ -12,14 +12,15 @@ import {
 import { useHelper } from "./HelperContext";
 import { NoteModel } from "../models/Note";
 import { ImageModel } from "../models/Image";
+import { ShapeModel } from "../models/Shape";
 
 interface ServerContextProps {
   callSaveImage: (id: string, image: string) => Promise<void>;
   callGetImage: (id: string) => Promise<ImageModel>;
   callGetAllImages: () => Promise<ImageModel[]>;
   callDeleteImage: (id: string) => Promise<void>;
-  callSaveNote: (id: string, imageId: string, note: string, shape: any) => Promise<void>;
-  callUpdateNote: (id: string, imageId: string, note: string, shape: any) => Promise<void>;
+  callSaveNote: (id: string, imageId: string, note: string, shape: ShapeModel) => Promise<void>;
+  callUpdateNote: (id: string, imageId: string, note: string, shape: ShapeModel) => Promise<void>;
   callDeleteNote: (id: string) => Promise<void>;
   callGetNoteListByImage: (imageId: string) => Promise<NoteModel[]>;
 }
@@ -47,7 +48,7 @@ export const ServerProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
-  const callGetImage = (id: string): Promise<any> => {
+  const callGetImage = (id: string): Promise<ImageModel> => {
     return new Promise(async (resolve, reject) => {
       try {
         showLoader();
@@ -62,7 +63,7 @@ export const ServerProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
-  const callGetAllImages = (): Promise<any[]> => {
+  const callGetAllImages = (): Promise<ImageModel[]> => {
     return new Promise(async (resolve, reject) => {
       try {
         showLoader();
@@ -93,7 +94,7 @@ export const ServerProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
-  const callSaveNote = (id: string, imageId: string, note: string, shape: any): Promise<void> => {
+  const callSaveNote = (id: string, imageId: string, note: string, shape: ShapeModel): Promise<void> => {
     return new Promise(async (resolve, reject) => {
       try {
         showLoader();
@@ -109,7 +110,7 @@ export const ServerProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
-  const callUpdateNote = (id: string, imageId: string, note: string, shape: any): Promise<void> => {
+  const callUpdateNote = (id: string, imageId: string, note: string, shape: ShapeModel): Promise<void> => {
     return new Promise(async (resolve, reject) => {
       try {
         showLoader();
@@ -141,7 +142,7 @@ export const ServerProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
-  const callGetNoteListByImage = (imageId: string): Promise<any[]> => {
+  const callGetNoteListByImage = (imageId: string): Promise<NoteModel[]> => {
     return new Promise(async (resolve, reject) => {
       try {
         showLoader();
