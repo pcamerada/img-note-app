@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { LuDownloadCloud, LuTrash2 } from "react-icons/lu";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import TooltipsComponent from "../components/TooltipsComponent";
+import { TooltipModel } from "../models/Tooltip";
 
 type ImageComponentProps = {
   id: string;
@@ -16,6 +17,15 @@ const ImageComponent = ({
   triggerDeleteImage,
 }: ImageComponentProps) => {
   const navigate = useNavigate();
+
+  const tooltipsArray : TooltipModel[] = [
+    {
+      id: "tooltip-active-session",
+      place: "top",
+      content: "Active Session",
+      condition: sessionImageId === id
+    }
+  ];
 
   const handleEditImage = (id: string) => {
     navigate(`/detail/${id}`);
@@ -44,12 +54,7 @@ const ImageComponent = ({
           <LuTrash2 className="h-6 w-6" />
         </button>
       </div>
-      <ReactTooltip
-        id="tooltip-active-session"
-        place="bottom"
-        variant="info"
-        content="Active Session"
-      />
+      <TooltipsComponent tooltipsArray={tooltipsArray} />
     </div>
   );
 };

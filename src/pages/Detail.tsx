@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import {
   LuCheck,
   LuChevronLeft,
@@ -12,10 +11,12 @@ import {
 } from "react-icons/lu";
 import CanvaComponent from "../components/CanvaComponent";
 import NotesComponent from "../components/NotesComponent";
+import TooltipsComponent from "../components/TooltipsComponent";
 import { NoteModel } from "../models/Note";
 import { ShapeModel } from "../models/Shape";
 import { useServer } from "../contexts/ServerContext";
 import { useHelper } from "../contexts/HelperContext";
+import { TooltipModel } from "../models/Tooltip";
 
 const Detail = () => {
   const {
@@ -38,6 +39,37 @@ const Detail = () => {
 
   const [shape, setShape] = useState<ShapeModel | null>(null);
   const [selectedShape, setSelectedShape] = useState<string | null>(null);
+
+  const tooltipsArray : TooltipModel[] = [
+    {
+      id: "tooltip-save-session",
+      place: "left",
+      content: "Save Session",
+      condition: shape != null && note != null
+    },
+    {
+      id: "tooltip-set-rectangle",
+      place: "left",
+      content: "Set Rectangle"
+    },
+    {
+      id: "tooltip-set-circle",
+      place: "left",
+      content: "Set Circle"
+    },
+    {
+      id: "tooltip-save",
+      place: "left",
+      content: "Save Annotation",
+      condition: !!shape && !!note
+    },
+    {
+      id: "tooltip-clear",
+      place: "left",
+      content: "Clear",
+      condition: !!shape && !!note
+    }
+  ];
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -253,42 +285,7 @@ const Detail = () => {
           />
         </div>
       )}
-      {shape && note && (
-        <ReactTooltip
-          id="tooltip-save-session"
-          place="left"
-          variant="info"
-          content="Save Session"
-        />
-      )}
-      <ReactTooltip
-        id="tooltip-set-rectangle"
-        place="left"
-        variant="info"
-        content="Set Rectangle"
-      />
-      <ReactTooltip
-        id="tooltip-set-circle"
-        place="left"
-        variant="info"
-        content="Set Circle"
-      />
-      {shape && note && (
-        <ReactTooltip
-          id="tooltip-save"
-          place="left"
-          variant="info"
-          content="Save Annotation"
-        />
-      )}
-      {shape && note && (
-        <ReactTooltip
-          id="tooltip-clear"
-          place="left"
-          variant="info"
-          content="Clear"
-        />
-      )}
+      <TooltipsComponent tooltipsArray={tooltipsArray} />
     </div>
   );
 };
