@@ -218,7 +218,7 @@ const Detail = () => {
                     : "bg-gray-100 cursor-default"
                 }`}
                 onClick={saveSession}
-                disabled={!shape && !note}
+                disabled={!shape || !note}
                 data-tooltip-id="tooltip-save-session"
               >
                 <LuUploadCloud className="h-6 w-6" />
@@ -248,14 +248,14 @@ const Detail = () => {
                     : "bg-gray-100 cursor-default"
                 }`}
                 onClick={handleSaveNote}
-                disabled={!shape && !note}
+                disabled={!shape || !note}
                 data-tooltip-id="tooltip-save"
               >
                 <LuCheck className="h-6 w-6" />
               </button>
               <button
                 className={`p-2 rounded-full ${
-                  shape && note
+                  shape || note
                     ? "bg-red-100 hover:bg-red-300"
                     : "bg-gray-100 cursor-default"
                 }`}
@@ -265,6 +265,7 @@ const Detail = () => {
               >
                 <LuX className="h-6 w-6" />
               </button>
+
             </div>
           </div>
           {(selectedShape || note) && (
